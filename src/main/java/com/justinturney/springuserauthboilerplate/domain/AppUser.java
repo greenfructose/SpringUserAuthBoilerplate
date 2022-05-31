@@ -2,10 +2,7 @@ package com.justinturney.springuserauthboilerplate.domain;
 
 
 import com.justinturney.springuserauthboilerplate.security.UserRole;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -19,7 +16,7 @@ import java.util.Collections;
 @EqualsAndHashCode
 @NoArgsConstructor
 @Entity
-public class User implements UserDetails {
+public class AppUser implements UserDetails {
 
 
     @SequenceGenerator(
@@ -33,23 +30,25 @@ public class User implements UserDetails {
             generator = "user_sequence"
     )
     private Long id;
-    private String name;
+    private String firstName;
+    private String lastName;
     private String username;
     private String email;
     private String password;
     @Enumerated(EnumType.STRING)
     private UserRole userRole;
-    private Boolean locked;
-    private Boolean enabled;
+    private Boolean locked = false;
+    private Boolean enabled = false;
 
-    public User(String name,
-                String username,
-                String email,
-                String password,
-                UserRole userRole,
-                Boolean locked,
-                Boolean enabled) {
-        this.name = name;
+    public AppUser(String firstName,
+                   String lastName,
+                   String username,
+                   String email,
+                   String password,
+                   UserRole userRole
+    ) {
+        this.firstName = firstName;
+        this.lastName = lastName;
         this.username = username;
         this.email = email;
         this.password = password;
