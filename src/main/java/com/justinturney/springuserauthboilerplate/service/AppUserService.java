@@ -1,6 +1,7 @@
 package com.justinturney.springuserauthboilerplate.service;
 
 import com.justinturney.springuserauthboilerplate.domain.AppUser;
+import com.justinturney.springuserauthboilerplate.domain.ConfirmationToken;
 import com.justinturney.springuserauthboilerplate.repository.AppUserRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -8,6 +9,9 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+
+import java.time.LocalDateTime;
+import java.util.UUID;
 
 @Service
 @AllArgsConstructor
@@ -17,6 +21,7 @@ public class AppUserService implements UserDetailsService {
             "user with username %s not found";
     private final AppUserRepository appUserRepository;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
+    private final ConfirmationTokenService confirmationTokenService;
 
     @Override
     public UserDetails loadUserByUsername(String username)
@@ -37,6 +42,18 @@ public class AppUserService implements UserDetailsService {
         appUser.setPassword(encodedPassword);
         appUserRepository.save(appUser);
         // TODO: Send email conf token
-        return appUser.toString();
+        String token = UUID.randomUUID().toString();
+        ConfirmationToken confirmationToken = new ConfirmationToken(
+                token,
+                LocalDateTime.now(),
+                LocalDateTime.now().plusMinutes(15),
+                appUser
+        );
+        confirmationTokenService.saveConfirmationToken(confirmationToken);
+        return token;
+    }
+
+    public void enableAppUser(String email) {
+        appUserRepository.enableAppUser(email);
     }
 }

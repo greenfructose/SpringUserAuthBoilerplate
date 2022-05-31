@@ -1,4 +1,4 @@
-package com.justinturney.springuserauthboilerplate.service;
+package com.justinturney.springuserauthboilerplate.util;
 
 import org.springframework.stereotype.Service;
 
